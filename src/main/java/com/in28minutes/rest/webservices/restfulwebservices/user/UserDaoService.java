@@ -3,7 +3,7 @@ package com.in28minutes.rest.webservices.restfulwebservices.user;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.springframework.stereotype.Service;
@@ -28,7 +28,11 @@ public class UserDaoService {
 	
 	public User findOne(int id) {
 		Predicate<? super User> predicate = user -> user.getId().equals(id);
-		return users.stream().filter(predicate).findFirst().get();
+		Optional<User> useropt = users.stream().filter(predicate).findFirst();
+		if (!useropt.isPresent()) {
+			throw new UserNotFoundException("id: " + id);
+		}
+		return useropt.get();
 	}
 	
 	public User save(User user) {
